@@ -55,6 +55,7 @@ public class CustomerClient {
 	 * Calls the customer service to validate the login/password.
 	 */
 	public boolean validateCustomer(String login, String password) {
+		
 	 
 		// RestTemplate uses SimpleClientHttpRequestFactory which uses the JDK's
 		// HttpURLConnection
@@ -68,6 +69,7 @@ public class CustomerClient {
 
 		String url = "http://" + CUSTOMER_SERVICE_LOC + VALIDATE_PATH;
 		String urlParameters = "login=" + login + "&password=" + password;
+		
 	
 		HttpHeaders headers = new HttpHeaders();
 
