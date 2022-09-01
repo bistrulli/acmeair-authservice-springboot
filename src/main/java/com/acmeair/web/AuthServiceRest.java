@@ -18,6 +18,8 @@ package com.acmeair.web;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,11 +43,15 @@ import com.acmeair.securityutils.SecurityUtils;
 @RestController
 @RequestMapping("/")
 public class AuthServiceRest {
+	
+	@Value("${ms.hw}")
+	private Float hw;
 
 	private static final Logger logger = Logger.getLogger(AuthServiceRest.class.getName());
 
 	public static final String JWT_COOKIE_NAME = "jwt_token";
 	public static final String USER_COOKIE_NAME = "loggedinuser";
+	private static final AtomicInteger users = new AtomicInteger(0); 
 
 	
 
@@ -83,7 +90,7 @@ public class AuthServiceRest {
 			model.put("token", token);
 			model.put("login", login);
 									
-			return new ModelAndView(new View() {
+			ModelAndView res = new ModelAndView(new View() {
 
 				@Override
 				public String getContentType() {
@@ -96,6 +103,10 @@ public class AuthServiceRest {
 					response.getWriter().print("logged in");
 				}
 			}, model);
+			
+			this.doWork(100l);
+			
+			return res;
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -110,5 +121,18 @@ public class AuthServiceRest {
 
 	private boolean validateCustomer(String login, String password) {
 		return customerClient.validateCustomer(login, password);
+	}
+	
+	private void doWork(long stime) {
+//		Double isTime = Long.valueOf(stime).doubleValue();
+//		Float d = (float) (isTime.floatValue() * (AuthServiceRest.users.floatValue() / this.hw));
+//		AuthServiceRest.users.incrementAndGet();
+//		try {
+//			TimeUnit.MILLISECONDS.sleep(Math.max(Math.round(d), Math.round(isTime)));
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		} finally {
+//			AuthServiceRest.users.decrementAndGet();
+//		}
 	}
 }
