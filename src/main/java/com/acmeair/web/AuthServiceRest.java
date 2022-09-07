@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -104,7 +105,7 @@ public class AuthServiceRest {
 				}
 			}, model);
 			
-			this.doWork(100l);
+			this.doWork(150l);
 			
 			return res;
 
@@ -124,15 +125,15 @@ public class AuthServiceRest {
 	}
 	
 	private void doWork(long stime) {
-//		Double isTime = Long.valueOf(stime).doubleValue();
-//		Float d = (float) (isTime.floatValue() * (AuthServiceRest.users.floatValue() / this.hw));
-//		AuthServiceRest.users.incrementAndGet();
-//		try {
-//			TimeUnit.MILLISECONDS.sleep(Math.max(Math.round(d), Math.round(isTime)));
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		} finally {
-//			AuthServiceRest.users.decrementAndGet();
-//		}
+		AuthServiceRest.users.incrementAndGet();
+		Double isTime = Long.valueOf(stime).doubleValue();
+		Float d = (float) (isTime.floatValue() * (AuthServiceRest.users.floatValue() / this.hw));
+		try {
+			TimeUnit.MILLISECONDS.sleep(Math.max(Math.round(d), Math.round(isTime)));
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			AuthServiceRest.users.decrementAndGet();
+		}
 	}
 }
