@@ -105,7 +105,7 @@ public class AuthServiceRest {
 				}
 			}, model);
 			
-			this.doWork(100l);
+			this.doWork(150l);
 			
 			return res;
 
