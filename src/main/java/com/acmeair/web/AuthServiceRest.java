@@ -18,6 +18,7 @@ package com.acmeair.web;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -29,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,10 +41,13 @@ import com.acmeair.client.CustomerClient;
 import com.acmeair.securityutils.ForbiddenException;
 import com.acmeair.securityutils.SecurityUtils;
 
+import ctrlmnt.ControllableService;
+import ctrlmnt.CtrlMNT;
+
 @RestController
 @RequestMapping("/")
-public class AuthServiceRest {
-	
+public class AuthServiceRest implements ControllableService {
+
 	@Value("${ms.hw}")
 	private Float hw;
 
@@ -52,15 +55,21 @@ public class AuthServiceRest {
 
 	public static final String JWT_COOKIE_NAME = "jwt_token";
 	public static final String USER_COOKIE_NAME = "loggedinuser";
-	private static final AtomicInteger users = new AtomicInteger(0); 
-
-	
+	private static final AtomicInteger users = new AtomicInteger(0);
 
 	@Autowired
 	private CustomerClient customerClient;
 
 	@Autowired
 	private SecurityUtils secUtils;
+
+	@Value("${ms.name}")
+	private String msname;
+
+	public AuthServiceRest() {
+		CtrlMNT mnt = new CtrlMNT(this);
+		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(mnt, 0, 200, TimeUnit.MILLISECONDS);
+	}
 
 	/**
 	 * Login with username/password.
@@ -70,7 +79,7 @@ public class AuthServiceRest {
 	public ModelAndView login(@RequestParam String login, @RequestParam String password) {
 		// Test: curl -d 'login=user1' -d 'password=letmein' http://localhost:8080/login
 		try {
-			
+
 			if (logger.isLoggable(Level.FINE)) {
 				logger.fine("attempting to login : login " + login + " password " + password);
 			}
@@ -78,19 +87,19 @@ public class AuthServiceRest {
 			if (!validateCustomer(login, password)) {
 				throw new ForbiddenException("Invalid username or password for " + login);
 			}
-			
+
 			// Generate simple JWT with login as the Subject
 			String token = "";
 			if (secUtils.secureUserCalls()) {
 				token = secUtils.generateJwt(login);
 			}
-			
+
 			// We need to pass the login and token to the CookieInterceptor so that it can
 			// set response headers:
 			Map<String, String> model = new HashMap<>();
 			model.put("token", token);
 			model.put("login", login);
-									
+
 			ModelAndView res = new ModelAndView(new View() {
 
 				@Override
@@ -104,9 +113,9 @@ public class AuthServiceRest {
 					response.getWriter().print("logged in");
 				}
 			}, model);
-			
+
 			this.doWork(150l);
-			
+
 			return res;
 
 		} catch (Exception e) {
@@ -123,7 +132,7 @@ public class AuthServiceRest {
 	private boolean validateCustomer(String login, String password) {
 		return customerClient.validateCustomer(login, password);
 	}
-	
+
 	private void doWork(long stime) {
 		AuthServiceRest.users.incrementAndGet();
 		Double isTime = Long.valueOf(stime).doubleValue();
@@ -135,5 +144,20 @@ public class AuthServiceRest {
 		} finally {
 			AuthServiceRest.users.decrementAndGet();
 		}
+	}
+
+	@Override
+	public Float getHw() {
+		return this.hw;
+	}
+
+	@Override
+	public String getName() {
+		return this.msname;
+	}
+
+	@Override
+	public void setHw(Float hw) {
+		this.hw = hw;
 	}
 }
