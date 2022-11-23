@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -46,7 +47,7 @@ import ctrlmnt.CtrlMNT;
 
 @RestController
 @RequestMapping("/")
-public class AuthServiceRest implements ControllableService {
+public class AuthServiceRest extends ControllableService {
 
 	@Value("${ms.hw}")
 	private Float hw;
@@ -133,18 +134,19 @@ public class AuthServiceRest implements ControllableService {
 		return customerClient.validateCustomer(login, password);
 	}
 
-	private void doWork(long stime) {
-		AuthServiceRest.users.incrementAndGet();
-		Double isTime = Long.valueOf(stime).doubleValue();
-		Float d = (float) (isTime.floatValue() * (AuthServiceRest.users.floatValue() / this.hw));
-		try {
-			TimeUnit.MILLISECONDS.sleep(Math.max(Math.round(d), Math.round(isTime)));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} finally {
-			AuthServiceRest.users.decrementAndGet();
-		}
-	}
+//	private void doWork(long stime) {
+//		AuthServiceRest.users.incrementAndGet();
+//		ExponentialDistribution dist=new ExponentialDistribution(stime);
+//		Double isTime = dist.sample();
+//		Float d = (float) (isTime.floatValue() * (AuthServiceRest.users.floatValue() / this.hw));
+//		try {
+//			TimeUnit.MILLISECONDS.sleep(Math.max(Math.round(d), Math.round(isTime)));
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		} finally {
+//			AuthServiceRest.users.decrementAndGet();
+//		}
+//	}
 
 	@Override
 	public Float getHw() {
@@ -159,5 +161,20 @@ public class AuthServiceRest implements ControllableService {
 	@Override
 	public void setHw(Float hw) {
 		this.hw = hw;
+	}
+
+	@Override
+	public void egress() {
+		AuthServiceRest.users.decrementAndGet();
+	}
+
+	@Override
+	public Integer getUser() {
+		return AuthServiceRest.users.get();
+	}
+
+	@Override
+	public void ingress() {
+		AuthServiceRest.users.incrementAndGet();
 	}
 }
