@@ -70,6 +70,8 @@ public class CustomerClient {
 		String url = "http://" + CUSTOMER_SERVICE_LOC + VALIDATE_PATH;
 		String urlParameters = "login=" + login + "&password=" + password;
 		
+		System.out.println(url);
+		System.out.println(urlParameters);
 	
 		HttpHeaders headers = new HttpHeaders();
 
