@@ -68,8 +68,8 @@ public class AuthServiceRest extends ControllableService {
 	private String msname;
 
 	public AuthServiceRest() {
-//		CtrlMNT mnt = new CtrlMNT(this);
-//		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(mnt, 0, 500, TimeUnit.MILLISECONDS);
+		CtrlMNT mnt = new CtrlMNT(this);
+		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(mnt, 0, 500, TimeUnit.MILLISECONDS);
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class AuthServiceRest extends ControllableService {
 				}
 			}, model);
 
-			this.doWork(150l);
+			this.doWork(450l);
 
 			return res;
 
@@ -133,20 +133,6 @@ public class AuthServiceRest extends ControllableService {
 	private boolean validateCustomer(String login, String password) {
 		return customerClient.validateCustomer(login, password);
 	}
-
-//	private void doWork(long stime) {
-//		AuthServiceRest.users.incrementAndGet();
-//		ExponentialDistribution dist=new ExponentialDistribution(stime);
-//		Double isTime = dist.sample();
-//		Float d = (float) (isTime.floatValue() * (AuthServiceRest.users.floatValue() / this.hw));
-//		try {
-//			TimeUnit.MILLISECONDS.sleep(Math.max(Math.round(d), Math.round(isTime)));
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		} finally {
-//			AuthServiceRest.users.decrementAndGet();
-//		}
-//	}
 
 	@Override
 	public Float getHw() {
