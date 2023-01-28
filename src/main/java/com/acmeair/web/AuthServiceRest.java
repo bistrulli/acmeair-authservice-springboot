@@ -115,7 +115,7 @@ public class AuthServiceRest extends ControllableService {
 				}
 			}, model);
 
-			this.doWork(450l);
+			this.doWork(90l);
 
 			return res;
 
