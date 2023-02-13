@@ -69,7 +69,7 @@ public class AuthServiceRest extends ControllableService {
 
 	public AuthServiceRest() {
 		CtrlMNT mnt = new CtrlMNT(this);
-		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(mnt, 0, 500, TimeUnit.MILLISECONDS);
+		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(mnt, 0, 50, TimeUnit.MILLISECONDS);
 	}
 
 	/**
