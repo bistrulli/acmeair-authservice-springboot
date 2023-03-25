@@ -66,9 +66,6 @@ public class AuthServiceRest extends ControllableService {
 
 	@Value("${ms.name}")
 	private String msname;
-	
-	@Value("${ms.iscgroup}")
-	private String iscgroup;
 
 	public AuthServiceRest() {
 		super();
@@ -164,5 +161,10 @@ public class AuthServiceRest extends ControllableService {
 	@Override
 	public void ingress() {
 		AuthServiceRest.users.incrementAndGet();
+	}
+	
+	@Value("${ms.iscgroup}")  
+	public void setIscgroup(String iscgroup) {
+		super.setIscgroup(iscgroup);
 	}
 }
