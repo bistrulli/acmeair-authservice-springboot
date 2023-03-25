@@ -66,9 +66,12 @@ public class AuthServiceRest extends ControllableService {
 
 	@Value("${ms.name}")
 	private String msname;
+	
+	@Value("${ms.iscgroup}")
+	private String iscgroup;
 
 	public AuthServiceRest() {
-		if (!this.getIscgroup().equals("y")) {
+		if (!this.iscgroup.equals("y")) {
 			CtrlMNT mnt = new CtrlMNT(this);
 			Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(mnt, 0, 50, TimeUnit.MILLISECONDS);
 		}
@@ -164,10 +167,5 @@ public class AuthServiceRest extends ControllableService {
 	@Override
 	public void ingress() {
 		AuthServiceRest.users.incrementAndGet();
-	}
-	
-	@Value("${ms.iscgroup}")  
-	public void setIscgroup(String iscgroup) {
-		super.setIscgroup(iscgroup);
 	}
 }
