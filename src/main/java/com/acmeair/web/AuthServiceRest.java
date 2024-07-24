@@ -70,6 +70,9 @@ public class AuthServiceRest extends ControllableService {
 	@Value("${ms.iscgroup}")
 	private String iscgroup;
 
+	@Value("${ms.stime}")
+    private Double stime;
+
 	public AuthServiceRest() {
 		CtrlMNT mnt = new CtrlMNT(this);
 		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(mnt, 0, 50, TimeUnit.MILLISECONDS);
@@ -118,7 +121,7 @@ public class AuthServiceRest extends ControllableService {
 				}
 			}, model);
 
-			this.doWork(90l);
+			this.doWork((long) this.stime);
 
 			return res;
 
