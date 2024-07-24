@@ -71,7 +71,7 @@ public class AuthServiceRest extends ControllableService {
 	private String iscgroup;
 
 	@Value("${ms.stime}")
-    private Long stime;
+    private long stime;
 
 	public AuthServiceRest() {
 		CtrlMNT mnt = new CtrlMNT(this);
@@ -121,7 +121,7 @@ public class AuthServiceRest extends ControllableService {
 				}
 			}, model);
 
-			this.doWork(90l);
+			this.doWork(this.stime); //90l
 
 			return res;
 
