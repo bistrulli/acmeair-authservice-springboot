@@ -73,6 +73,7 @@ public class AuthServiceRest extends ControllableService {
 	@Value("${ms.stime}")
     private long stime;
 
+
 	public AuthServiceRest() {
 		CtrlMNT mnt = new CtrlMNT(this);
 		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(mnt, 0, 50, TimeUnit.MILLISECONDS);
