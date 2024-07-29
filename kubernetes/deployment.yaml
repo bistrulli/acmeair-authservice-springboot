@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: acmeair-auth-container
-          image: rpizziol/acmeair-authservice-springboot:0.16
+          image: rpizziol/acmeair-authservice-springboot:0.17
           imagePullPolicy: Always
           resizePolicy:
             - resourceName: cpu

@@ -44,6 +44,12 @@ import com.acmeair.securityutils.SecurityUtils;
 
 import ctrlmnt.ControllableService;
 import ctrlmnt.CtrlMNT;
+import ctrlmnt.MonitoringThread;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
 @RequestMapping("/")
@@ -73,10 +79,15 @@ public class AuthServiceRest extends ControllableService {
 	@Value("${ms.stime}")
     private long stime;
 
+    private MonitoringThread monitor = null;
 
 	public AuthServiceRest() {
 		CtrlMNT mnt = new CtrlMNT(this);
 		Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(mnt, 0, 50, TimeUnit.MILLISECONDS);
+
+		monitor = new MonitoringThread();
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(monitor, 0, 30, TimeUnit.SECONDS);
 	}
 
 	/**
@@ -86,6 +97,10 @@ public class AuthServiceRest extends ControllableService {
 	@RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ModelAndView login(@RequestParam String login, @RequestParam String password) {
 		// Test: curl -d 'login=user1' -d 'password=letmein' http://localhost:8080/login
+
+		ControllableService.activeRequests.incrementAndGet();
+		long startTime = System.currentTimeMillis(); // TODO nanotime
+
 		try {
 
 			if (logger.isLoggable(Level.FINE)) {
@@ -123,6 +138,15 @@ public class AuthServiceRest extends ControllableService {
 			}, model);
 
 			this.doWork(this.stime); //90l
+
+
+			logger.info("New request arrived. Total:" + ControllableService.requestCount.addAndGet(1));
+			long endTime = System.currentTimeMillis();
+	        long elapsedTime = endTime - startTime; // Elapsed time in milliseconds
+	        logger.info("Single request service time: " + elapsedTime + " ms");
+
+	        logger.info("Current serviceTimeSum: " + ControllableService.serviceTimesSum.addAndGet(elapsedTime) + " ms");
+	        ControllableService.activeRequests.decrementAndGet();
 
 			return res;
 
