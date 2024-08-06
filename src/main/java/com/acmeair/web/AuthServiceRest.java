@@ -139,7 +139,6 @@ public class AuthServiceRest extends ControllableService {
 
 			this.doWork(this.stime); //90l
 
-
 			logger.info("New request arrived. Total:" + ControllableService.requestCount.addAndGet(1));
 			long endTime = System.currentTimeMillis();
 	        long elapsedTime = endTime - startTime; // Elapsed time in milliseconds
