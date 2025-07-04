@@ -96,7 +96,7 @@ public class AuthServiceRest extends ControllableService {
 	 */
 	@RequestMapping(value = "/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 	public ModelAndView login(@RequestParam String login, @RequestParam String password) {
-		// Test: curl -d 'login=user1' -d 'password=letmein' http://localhost:8080/login
+		// Test: curl -d 'login=uid0@email.com' -d 'password=password' http://haproxy:8080/login
 
 		ControllableService.activeRequests.incrementAndGet();
 		long startTime = System.currentTimeMillis(); // TODO nanotime
@@ -158,6 +158,12 @@ public class AuthServiceRest extends ControllableService {
 	@RequestMapping("/")
 	public String checkStatus() {
 		return "OK";
+	}
+
+	@RequestMapping(value = "/deploy", method = RequestMethod.GET)
+	synchronized public String deploy(@RequestParam String stime) {
+		this.stime = Long.valueOf(stime);
+		return String.format("Deployed with stime: %d", this.stime);
 	}
 
 	private boolean validateCustomer(String login, String password) {
